@@ -1,5 +1,5 @@
 <?php
-namespace Lib\Validators;
+namespace A3gZ\PhpExceptions\SiriusValidators;
 
 use Sirius\Validation\Rule\AbstractRule;
 

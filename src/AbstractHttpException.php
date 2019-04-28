@@ -3,7 +3,7 @@ namespace A3gZ\PhpExceptions;
 
 use Psr\Http\Message\ResponseInterface as Response;
 
-class AbstractHttpSiriusException extends \Exception
+class AbstractHttpException extends \Exception
 {
   private $httpStatusCode;
 
