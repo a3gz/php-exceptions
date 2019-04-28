@@ -1,0 +1,21 @@
+{
+  "name": "a3gz/php-exceptions",
+  "description": "Recopilation of helpful reusable exception classes",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alejandro Arbiza",
+      "email": "alejandro@roetal.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "suggest": {
+    "siriusphp/validation": "Provides very flexible and powerful validation."
+  },
+  "autoload": {
+    "psr-4": {
+      "A3gZ\\PhpExceptions\\": "src"
+    }
+  }
+}
