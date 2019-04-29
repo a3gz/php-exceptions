@@ -3,7 +3,7 @@ namespace A3gZ\PhpExceptions;
 
 use Psr\Http\Message\ResponseInterface as Response;
 
-class AbstractHttpException extends \Exception
+class AbstractException extends \Exception
 {
   private $httpStatusCode;
 
@@ -67,9 +67,8 @@ class AbstractHttpException extends \Exception
     foreach ($headers as $header => $content) {
       $response = $response->withHeader($header, $content);
     }
-    $response = $response
-      ->withStatus($this->getHttpStatusCode())
-      ->withJson($payload);
+    $response->getBody()->write(json_encode($payload));
+    $response = $response->withStatus($this->getHttpStatusCode());
     return $response;
   }
 

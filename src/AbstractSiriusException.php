@@ -3,7 +3,7 @@ namespace A3gZ\PhpExceptions;
 
 use Psr\Http\Message\ResponseInterface as Response;
 
-class AbstractHttpSiriusException extends AbstractHttpException
+class AbstractSiriusException extends AbstractHttpException
 {
   private $details = null;
 
@@ -55,36 +55,10 @@ class AbstractHttpSiriusException extends AbstractHttpException
    * @return Psr\Http\Message\ResponseInterface
    */
   public function generateHttpResponse(Response $response) {
-    $headers = $this->getHttpHeaders();
-
-    $payload = [
-      'error'   => $this->getErrorType(),
-      'message' => $this->getMessage(),
-    ];
-
-    if ($this->hint !== null) {
-      $payload['hint'] = $this->hint;
-    }
-
+    $response = parent::generateHttpResponse($response);
     if ($this->redirectUri !== null) {
-      if ($useFragment === true) {
-        $this->redirectUri .= (strstr($this->redirectUri, '#') === false) ? '#' : '&';
-      } else {
-        $this->redirectUri .= (strstr($this->redirectUri, '?') === false) ? '?' : '&';
-      }
-
-      return $response
-        ->withStatus(302)
-        ->withHeader('Location', $this->redirectUri . http_build_query($payload));
+      return $response;
     }
-
-    foreach ($headers as $header => $content) {
-      $response = $response->withHeader($header, $content);
-    }
-
-    $response = $response->withJson($payload);
-
-    $response = $response->withStatus($this->getHttpStatusCode());
 
     $messages = $this->getMessages();
     if (count($messages)) {
@@ -105,7 +79,7 @@ class AbstractHttpSiriusException extends AbstractHttpException
       $payload = array_merge($payload, ['validation' => $validation]);
       $body->rewind();
       $body->write(json_encode($payload));
-      $response = $response->withJson($body);
+      // $response = $response->withJson($body);
     }
     return $response;
   }
