@@ -76,6 +76,7 @@ class AbstractSiriusException extends AbstractException
       $body->rewind();
       $payload = json_decode($body->read($body->getSize()), true);
       $payload = array_merge($payload, ['validation' => $validation]);
+      $body->rewind();
       $body->write(json_encode($payload));
     }
     return $response;
