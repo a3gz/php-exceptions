@@ -3,7 +3,7 @@ namespace A3gZ\PhpExceptions;
 
 use Psr\Http\Message\ResponseInterface as Response;
 
-class AbstractSiriusException extends AbstractHttpException
+class AbstractSiriusException extends AbstractException
 {
   private $details = null;
 
@@ -21,6 +21,7 @@ class AbstractSiriusException extends AbstractHttpException
   public function __construct($message, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null) {
     parent::__construct($message, $errorType, $httpStatusCode, $hint, $redirectUri);
 
+    $parsedMessages = [];
     if ($hint instanceof \Sirius\Validation\Validator) {
       $this->hint = null;
       $this->messages = $hint->getMessages();
@@ -35,8 +36,6 @@ class AbstractSiriusException extends AbstractHttpException
           $parsedMessages[$fieldName] = $parsedErrors;
         }
       }
-    } else {
-      $this->parsedMessages = [];
     }
 
     $this->details = [
@@ -63,9 +62,9 @@ class AbstractSiriusException extends AbstractHttpException
     $messages = $this->getMessages();
     if (count($messages)) {
       $validation = [];
-      foreach( $messages as $fieldName => $errors ) {
+      foreach ($messages as $fieldName => $errors) {
         $parsedErrors = [];
-        foreach( $errors as $anError ) {
+        foreach ($errors as $anError) {
           $parsedErrors[] = (string)$anError;
         }
         $validation[] = [
@@ -77,9 +76,7 @@ class AbstractSiriusException extends AbstractHttpException
       $body->rewind();
       $payload = json_decode($body->read($body->getSize()), true);
       $payload = array_merge($payload, ['validation' => $validation]);
-      $body->rewind();
       $body->write(json_encode($payload));
-      // $response = $response->withJson($body);
     }
     return $response;
   }
@@ -87,6 +84,7 @@ class AbstractSiriusException extends AbstractHttpException
   public function getDetails() {
     return $this->details;
   }
+
   public function getMessages() {
     return $this->messages;
   }

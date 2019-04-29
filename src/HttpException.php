@@ -1,7 +1,7 @@
 <?php
 namespace A3gZ\PhpExceptions;
 
-class HttpException extends AbstractHttpException
+class HttpException extends AbstractException
 {
   public static function badRequest($msg = 'Bad Request') {
     return new static($msg, 400);
