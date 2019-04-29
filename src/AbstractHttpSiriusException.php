@@ -3,19 +3,11 @@ namespace A3gZ\PhpExceptions;
 
 use Psr\Http\Message\ResponseInterface as Response;
 
-class AbstractHttpSiriusException extends \Exception
+class AbstractHttpSiriusException extends AbstractHttpException
 {
   private $details = null;
 
-  private $httpStatusCode;
-
-  private $errorType;
-
-  private $hint;
-
   protected $messages;
-
-  protected $redirectUri = null;
 
   /**
    * Throw a new exception.
@@ -27,10 +19,7 @@ class AbstractHttpSiriusException extends \Exception
    * @param null|string $redirectUri    A HTTP URI to redirect the user back to
    */
   public function __construct($message, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null) {
-    parent::__construct($message, $httpStatusCode);
-    $this->httpStatusCode = $httpStatusCode;
-    $this->errorType = $errorType;
-    $this->redirectUri = $redirectUri;
+    parent::__construct($message, $errorType, $httpStatusCode, $hint, $redirectUri);
 
     if ($hint instanceof \Sirius\Validation\Validator) {
       $this->hint = null;
@@ -48,7 +37,6 @@ class AbstractHttpSiriusException extends \Exception
       }
     } else {
       $this->parsedMessages = [];
-      $this->hint = $hint;
     }
 
     $this->details = [
@@ -94,7 +82,7 @@ class AbstractHttpSiriusException extends \Exception
       $response = $response->withHeader($header, $content);
     }
 
-    $response->getBody()->write(json_encode($payload));
+    $response = $response->withJson($payload);
 
     $response = $response->withStatus($this->getHttpStatusCode());
 
@@ -117,7 +105,7 @@ class AbstractHttpSiriusException extends \Exception
       $payload = array_merge($payload, ['validation' => $validation]);
       $body->rewind();
       $body->write(json_encode($payload));
-      $response = $response->withBody($body);
+      $response = $response->withJson($body);
     }
     return $response;
   }
@@ -125,53 +113,8 @@ class AbstractHttpSiriusException extends \Exception
   public function getDetails() {
     return $this->details;
   }
-
-  public function getErrorType() {
-    return $this->errorType;
-  }
-
-  public function getHint() {
-    return $this->hint;
-  }
-
-  /**
-   * Get all headers that have to be send with the error response.
-   *
-   * @return array Array with header values
-   */
-  public function getHttpHeaders() {
-    $headers = [
-      'Content-type' => 'application/json',
-    ];
-
-    // Add "WWW-Authenticate" header
-    //
-    // RFC 6749, section 5.2.:
-    // "If the client attempted to authenticate via the 'Authorization'
-    // request header field, the authorization server MUST
-    // respond with an HTTP 401 (Unauthorized) status code and
-    // include the "WWW-Authenticate" response header field
-    // matching the authentication scheme used by the client.
-    // @codeCoverageIgnoreStart
-    if ($this->errorType === 'invalid_client') {
-      $authScheme = 'Basic';
-      if (array_key_exists('HTTP_AUTHORIZATION', $_SERVER) !== false
-        && strpos($_SERVER['HTTP_AUTHORIZATION'], 'Bearer') === 0
-      ) {
-        $authScheme = 'Bearer';
-      }
-      $headers['WWW-Authenticate'] = $authScheme . ' realm="OAuth"';
-    }
-    // @codeCoverageIgnoreEnd
-    return $headers;
-  }
-
   public function getMessages() {
     return $this->messages;
-  }
-
-  public function getHttpStatusCode() {
-    return $this->httpStatusCode;
   }
 }
 
