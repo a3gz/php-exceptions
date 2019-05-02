@@ -11,6 +11,7 @@
   ],
   "minimum-stability": "dev",
   "suggest": {
+    "psr/log": "Logging standards. Required by EncodedException",
     "siriusphp/validation": "Provides very flexible and powerful validation."
   },
   "autoload": {
