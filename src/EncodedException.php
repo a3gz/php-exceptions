@@ -1,5 +1,5 @@
 <?php
-namespace A3gZ\Exceptions;
+namespace A3gZ\PhpExceptions;
 
 use Psr\Log\LoggerInterface;
 
