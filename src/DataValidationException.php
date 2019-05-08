@@ -1,13 +1,13 @@
 <?php
 namespace A3gZ\PhpExceptions;
 
-class DataValidationException extends AbstractHttpSiriusException
+class DataValidationException extends AbstractSiriusException
 {
   public static function invalidData($validator) {
     $e = new static(
       'Invalid data',
       'invalid_data',
-      HttpStatus::HTTP_BAD_REQUEST,
+      400,
       $validator
     );
     return $e;
