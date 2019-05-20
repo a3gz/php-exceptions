@@ -10,7 +10,7 @@ class Time extends AbstractRule
   
   public function validate($value, $valueIdentifier = null) {
     $this->value   = $value;
-    $this->success = preg_match('#^([01]\d|2[0-3]):?([0-5]\d)$#', $value);
+    $this->success = preg_match('#^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$#', $value);
 
     return $this->success;
   }
