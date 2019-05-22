@@ -30,7 +30,6 @@ class AbstractException extends \Exception
     $this->hint = $hint;
 
     $this->details = [
-      'code' => $code,
       'type' => $errorType,
       'httpStatusCode' => $httpStatusCode,
       'hint' => $hint,
