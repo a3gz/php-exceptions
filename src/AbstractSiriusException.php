@@ -26,9 +26,9 @@ class AbstractSiriusException extends AbstractException
       $this->hint = null;
       $this->messages = $hint->getMessages();
       $parsedMessages = [];
-      if ($messages) {
+      if ($this->messages) {
         $parsedMessages = [];
-        foreach ($messages as $fieldName => $errors) {
+        foreach ($this->messages as $fieldName => $errors) {
           $parsedErrors = [];
           foreach ($errors as $anError) {
             $parsedErrors[] = (string)$anError;
@@ -39,7 +39,6 @@ class AbstractSiriusException extends AbstractException
     }
 
     $this->details = [
-      'code' => $code,
       'type' => $errorType,
       'httpStatusCode' => $httpStatusCode,
       'hint' => $hint,
