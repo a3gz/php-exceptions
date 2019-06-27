@@ -11,6 +11,10 @@ class HttpException extends AbstractException
     return new static($msg, 'http_bad_request', 400, null, $redirectUrl);
   }
 
+  public static function conflict($msg = 'Conflict', $redirectUrl = null) {
+    return new static($msg, 'http_conflict', 409, null, $redirectUrl);
+  }
+
   public static function internalServerError($msg = 'Internal server error', $redirectUrl = null) {
     return new static($msg, 'http_internal_server_error', 500, null, $redirectUrl);
   }
