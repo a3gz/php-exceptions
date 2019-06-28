@@ -5,19 +5,32 @@ use Psr\Log\LoggerInterface;
 
 class EncodedException extends \Exception
 {
-  public function __construct($exception, LoggerInterface $logger) {
+  protected $hint = null;
+  protected $redirectUrl = null;
+
+  public function __construct($exception, LoggerInterface $logger, $redirectUrl = null) {
     $ip = @$_SERVER['HTTP_CLIENT_IP'] ?: @$_SERVER['HTTP_X_FORWARDED_FOR'] ?: @$_SERVER['REMOTE_ADDR'];
     $now = time();
     $id = md5("{$ip}.{$now}");
+    $this->hint = "Mention this code: {$id}";
+    $this->redirectUrl = $redirectUrl;
 
-    $code = $exception->getCode();
-    $logger->error($exception->getMessage(), [
-      'code' => $code,
-      'hint' => $id,
-      'exception' => $exception,
+    $logger->error($id, [
+      'file' => $exception->getFile(),
+      'line' => $exception->getLine(),
+      'code' => $exception->getCode(),
+      'message' => $exception->getMessage(),
     ]);
 
-    parent::__construct("Encoded exception: {$id}", $code);
+    $msg = "Encoded exception: {$id}";
+    parent::__construct($msg, 500);
+  }
+
+  public function getHttpHeaders() {
+    $headers = [
+      'Content-type' => 'application/json',
+    ];
+    return $headers;
   }
 
   /**
@@ -29,14 +42,31 @@ class EncodedException extends \Exception
    * @return \Psr\Http\Message\ResponseInterface
    */
   public function response($response) {
-    $body = $response->getBody();
-    $body->write($this->getMessage());
+    $headers = $this->getHttpHeaders();
 
-    $statusCode = $this->getCode();
-    if (($statusCode < 100) || ($statusCode > 500)) {
-      $statusCode = 500;
+    $payload = [
+      'error'   => 'encoded_exception',
+      'message' => $this->getMessage(),
+      'hint' => $this->hint,
+    ];
+    if ($this->redirectUri !== null) {
+      if ($useFragment === true) {
+        $this->redirectUri .= (strstr($this->redirectUri, '#') === false) ? '#' : '&';
+      } else {
+        $this->redirectUri .= (strstr($this->redirectUri, '?') === false) ? '?' : '&';
+      }
+      return $response
+        ->withStatus(302)
+        ->withHeader('Location', $this->redirectUri . http_build_query($payload));
     }
-    return $response->withStatus($statusCode)->withBody($body);
+
+    foreach ($headers as $header => $content) {
+      $response = $response->withHeader($header, $content);
+    }
+    $response = $response
+      ->withStatus(500)
+      ->withJson($payload);
+    return $response;
   }
 } // class
 
