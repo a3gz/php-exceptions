@@ -6,14 +6,14 @@ use Psr\Log\LoggerInterface;
 class EncodedException extends \Exception
 {
   protected $hint = null;
-  protected $redirectUrl = null;
+  protected $redirectUri = null;
 
-  public function __construct($exception, LoggerInterface $logger, $redirectUrl = null) {
+  public function __construct($exception, LoggerInterface $logger, $redirectUri = null) {
     $ip = @$_SERVER['HTTP_CLIENT_IP'] ?: @$_SERVER['HTTP_X_FORWARDED_FOR'] ?: @$_SERVER['REMOTE_ADDR'];
     $now = time();
     $id = md5("{$ip}.{$now}");
     $this->hint = "Mention this code: {$id}";
-    $this->redirectUrl = $redirectUrl;
+    $this->redirectUri = $redirectUri;
 
     $logger->error($id, [
       'file' => $exception->getFile(),
