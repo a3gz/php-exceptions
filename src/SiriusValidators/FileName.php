@@ -10,7 +10,7 @@ class FileName extends AbstractRule
   
   public function validate($value, $valueIdentifier = null) {
     $this->value   = $value;
-    $this->success = preg_match('#^[- _.0-9a-zA-Z]*$#', $value);
+    $this->success = preg_match('#^[ _.0-9a-zA-Z()-]*$#', $value);
 
     return $this->success;
   }
