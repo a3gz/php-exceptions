@@ -41,23 +41,26 @@ class EncodedException extends \Exception
    * @param \Psr\Http\Message\ResponseInterface $response
    * @return \Psr\Http\Message\ResponseInterface
    */
-  public function response($response) {
+  public function response($response, $redirectUri = null) {
     $headers = $this->getHttpHeaders();
+    if ($redirectUri === null) {
+      $redirectUri = $this->redirectUri;
+    }
 
     $payload = [
       'error'   => 'encoded_exception',
       'message' => $this->getMessage(),
       'hint' => $this->hint,
     ];
-    if ($this->redirectUri !== null) {
+    if ($redirectUri !== null) {
       if ($useFragment === true) {
-        $this->redirectUri .= (strstr($this->redirectUri, '#') === false) ? '#' : '&';
+        $redirectUri .= (strstr($redirectUri, '#') === false) ? '#' : '&';
       } else {
-        $this->redirectUri .= (strstr($this->redirectUri, '?') === false) ? '?' : '&';
+        $redirectUri .= (strstr($redirectUri, '?') === false) ? '?' : '&';
       }
       return $response
         ->withStatus(302)
-        ->withHeader('Location', $this->redirectUri . http_build_query($payload));
+        ->withHeader('Location', $redirectUri . http_build_query($payload));
     }
 
     foreach ($headers as $header => $content) {
