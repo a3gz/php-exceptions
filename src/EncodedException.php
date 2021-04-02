@@ -66,7 +66,7 @@ class EncodedException extends \Exception
     foreach ($headers as $header => $content) {
       $response = $response->withHeader($header, $content);
     }
-    $response->getBody()->write($payload);
+    $response->getBody()->write(json_encode($payload));
     $response = $response
       ->withStatus(500)
       ->withHeader('Content-Type', 'application/json');
