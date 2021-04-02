@@ -63,9 +63,10 @@ class AbstractException extends \Exception
     foreach ($headers as $header => $content) {
       $response = $response->withHeader($header, $content);
     }
+    $response->getBody()->write($payload);
     $response = $response
       ->withStatus($this->getHttpStatusCode())
-      ->withJson($payload);
+      ->withHeader('Content-Type', 'application/json');
     return $response;
   }
 

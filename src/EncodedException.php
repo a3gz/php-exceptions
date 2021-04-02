@@ -66,9 +66,10 @@ class EncodedException extends \Exception
     foreach ($headers as $header => $content) {
       $response = $response->withHeader($header, $content);
     }
+    $response->getBody()->write($payload);
     $response = $response
       ->withStatus(500)
-      ->withJson($payload);
+      ->withHeader('Content-Type', 'application/json');
     return $response;
   }
 } // class
