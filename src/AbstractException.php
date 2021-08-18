@@ -39,7 +39,7 @@ class AbstractException extends \Exception
   /**
    * @return Psr\Http\Message\ResponseInterface
    */
-  public function generateHttpResponse(Response $response) {
+  public function generateHttpResponse(Response $response, $useFragment = false) {
     $headers = $this->getHttpHeaders();
 
     $payload = [
