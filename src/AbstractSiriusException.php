@@ -52,8 +52,8 @@ class AbstractSiriusException extends AbstractException
    *
    * @return Psr\Http\Message\ResponseInterface
    */
-  public function generateHttpResponse(Response $response) {
-    $response = parent::generateHttpResponse($response);
+  public function generateHttpResponse(Response $response, $useFragment = false) {
+      $response = parent::generateHttpResponse($response, $useFragment);
     if ($this->redirectUri !== null) {
       return $response;
     }
