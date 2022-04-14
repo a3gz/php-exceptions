@@ -9,6 +9,9 @@
       "email": "alejandro@roetal.com"
     }
   ],
+  "require": {
+    "php": ">=7.1"
+  },
   "minimum-stability": "dev",
   "suggest": {
     "psr/log": "Logging standards. Required by EncodedException",
