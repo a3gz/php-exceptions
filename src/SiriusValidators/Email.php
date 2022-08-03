@@ -10,7 +10,7 @@ class Email extends AbstractRule {
 
   public function validate($value, $valueIdentifier = null): bool {
     $this->value = $value;
-    $this->success = preg_match('/^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$/', $value);
+    $this->success = preg_match('/^[A-Za-z0-9](([+_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$/', $value);
     return $this->success;
   }
 }
