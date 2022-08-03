@@ -3,6 +3,10 @@ namespace A3gZ\PhpExceptions;
 
 class HttpException extends AbstractException
 {
+  public static function unauthorized($msg = 'Unauthorized', $redirectUrl = null) {
+    return new static($msg, 'http_unauthorized', 401, null, $redirectUrl);
+  }
+
   public static function accessDenied($msg = 'Access denied', $redirectUrl = null) {
     return new static($msg, 'http_access_denied', 403, null, $redirectUrl);
   }
